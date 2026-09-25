@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículum - Cristian Ginarte Cárdenas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, Arial, sans-serif; }
+        body {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 30px 16px;
+            background: radial-gradient(800px 400px at 15% 0%, #dbeafe 0%, transparent 60%), #f1f5f9;
+            color: #334155;
+        }
+        .box {
+            max-width: 640px; width: 100%;
+            background: #fff; border: 1px solid #e6eaf2; border-radius: 18px;
+            padding: 38px 40px;
+            box-shadow: 0 20px 55px rgba(15, 23, 42, .1);
+        }
+        h1 { font-size: 1.6rem; color: #0f172a; letter-spacing: -.5px; }
+        p.sub { font-size: .9rem; color: #64748b; margin-top: 6px; }
+        h2 {
+            font-size: .7rem; text-transform: uppercase; letter-spacing: 1.4px;
+            color: #4f46e5; margin: 26px 0 12px; display: flex; align-items: center; gap: 8px;
+        }
+        h2::before { content: ''; width: 14px; height: 3px; border-radius: 2px; background: linear-gradient(90deg, #4f46e5, #0891b2); }
+        h2::after { content: ''; flex: 1; height: 1px; background: #e6eaf2; }
+        a.card {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            text-decoration: none; color: inherit;
+            border: 1px solid #e6eaf2; border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 8px;
+            background: linear-gradient(180deg, #fbfcff, #fff);
+            transition: border-color .2s, transform .12s, box-shadow .2s;
+        }
+        a.card:hover { border-color: #a5b4fc; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
+        a.card strong { font-size: .95rem; color: #0f172a; display: block; }
+        a.card small { font-size: .8rem; color: #64748b; }
+        a.card .go { color: #4f46e5; font-weight: 700; font-size: .8rem; white-space: nowrap; }
+        .flag { display: inline-block; font-size: .68rem; font-weight: 700; color: #0891b2; letter-spacing: .6px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Cristian Ginarte Cárdenas</h1>
+        <p class="sub">Currículum en 6 versiones. Cada una se genera a PDF con el botón azul.</p>
+
+        <h2>Español</h2>
+        <a class="card" href="es/completo.html">
+            <span><strong>Versión completa</strong><small>Perfil, recorrido, habilidades, 16 proyectos, formación</small></span>
+            <span class="go">Abrir →</span>
+        </a>
+        <a class="card" href="es/resumen.html">
+            <span><strong>Resumen — una hoja</strong><small>Perfil, experiencia, 6 proyectos clave, formación</small></span>
+            <span class="go">Abrir →</span>
+        </a>
+
+        <h2>Português</h2>
+        <a class="card" href="pt/completo.html">
+            <span><strong>Versão completa</strong><small>Perfil, trajetória, habilidades, 16 projetos, formação</small></span>
+            <span class="go">Abrir →</span>
+        </a>
+        <a class="card" href="pt/resumo.html">
+            <span><strong>Resumo — uma página</strong><small>Perfil, experiência, projetos, formação</small></span>
+            <span class="go">Abrir →</span>
+        </a>
+
+        <h2>English</h2>
+        <a class="card" href="en/full.html">
+            <span><strong>Full version</strong><small>Profile, journey, skills, 16 projects, education</small></span>
+            <span class="go">Open →</span>
+        </a>
+        <a class="card" href="en/resume.html">
+            <span><strong>Resume — one page</strong><small>Profile, experience, featured projects, education</small></span>
+            <span class="go">Open →</span>
+        </a>
+    </div>
+</body>
+</html>

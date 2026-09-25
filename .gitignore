@@ -1,0 +1,12 @@
+﻿# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# PDFs generados (se regeneran con el boton)
+*.pdf
