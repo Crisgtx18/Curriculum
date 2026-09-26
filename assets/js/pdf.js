@@ -1,14 +1,72 @@
 var ANCHO_CV = { corta: 980, larga: 900 };
 
+// Alto al que se estira una tarjeta para que, una vez escalada, ocupe la
+// hoja entera. 287mm de alto util (A4 menos 2x5mm) por 980px de ancho de
+// diseno sobre 200mm de ancho util dan 1406px. Se queda en 1390 para que un
+// redondeo no lo empujase a una tercera pagina.
+var ALTO_HOJA = 1390;
+
+// Projectos que se dejan en la hoja 1. El reparto apunta a igualar las dos
+// columnas derechas: la hoja 1 arrastra perfil + experiencia (~500px) y la
+// hoja 2 formacion (~230px), asi que la hoja 2 necesita dos proyectos mas.
+function repartoProyectos(total) {
+    return Math.max(1, Math.floor((total - 2) / 2));
+}
+
+function esVersionCorta() {
+    return !!document.querySelector('.side');
+}
+
+// La version corta se reparte en dos hojas. Se clona la tarjeta en vez de
+// duplicar el HTML de la barra lateral a mano en los tres idiomas, asi que
+// el contenido sigue teniendo una unica fuente.
+function prepararPaginas() {
+    if (!esVersionCorta()) return;
+    if (document.querySelector('.paginas')) return;
+
+    const tarjeta = document.querySelector('.cv-card');
+    const main1 = tarjeta && tarjeta.querySelector('.main');
+    if (!main1) return;
+
+    const bloques = Array.prototype.slice.call(main1.querySelectorAll(':scope > .bloque'));
+    // El bloque de proyectos se localiza por su titulo para que el reparto
+    // no dependa del idioma: Proyectos / Projetos / Projects.
+    const iProy = bloques.findIndex(function (b) {
+        const h2 = b.querySelector('h2');
+        return h2 && /proyecto|projet|project/i.test(h2.textContent);
+    });
+    if (iProy < 0) return;
+
+    const bloqueProy = bloques[iProy];
+    const proyectos = Array.prototype.slice.call(bloqueProy.querySelectorAll(':scope > .proj'));
+    const enHoja1 = repartoProyectos(proyectos.length);
+    if (enHoja1 >= proyectos.length) return;   // no hay nada que repartir
+
+    const bloqueFormacion = bloques[bloques.length - 1];
+    if (bloqueFormacion === bloqueProy) return;
+
+    const caja = document.createElement('div');
+    caja.className = 'paginas';
+    tarjeta.parentNode.insertBefore(caja, tarjeta);
+    caja.appendChild(tarjeta);
+
+    const hoja2 = tarjeta.cloneNode(true);
+    caja.appendChild(hoja2);
+    const main2 = hoja2.querySelector('.main');
+
+    // La hoja 2 arranca vacia: se rellena solo con lo que se le traslada.
+    Array.prototype.slice.call(main2.querySelectorAll(':scope > .bloque'))
+        .forEach(function (b) { main2.removeChild(b); });
+
+    proyectos.slice(enHoja1).forEach(function (p) { main2.appendChild(bloqueProy.removeChild(p)); });
+    if (bloqueFormacion.parentNode === main1) main2.appendChild(bloqueFormacion);
+}
+
 function generarPDF() {
     const tarjeta = document.querySelector('.cv-card');
     const variante = document.body.dataset.variante;
-
-    // La version corta tiene barra lateral; la completa no.
-    // Se detecta por el DOM y no por data-variante porque ese atributo
-    // no es consistente entre idiomas (resumido / pt / en).
-    const esCorta = !!document.querySelector('.side');
-    const ancho = esCorta ? ANCHO_CV.corta : ANCHO_CV.larga;
+    const corta = esVersionCorta();
+    const ancho = corta ? ANCHO_CV.corta : ANCHO_CV.larga;
 
     const opciones = {
         margin:       5,
@@ -18,28 +76,34 @@ function generarPDF() {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // La corta cabe en una sola pagina. La completa se parte en varias,
-    // y hay que evitar que un corte caiga en medio de una tarjeta.
-    opciones.pagebreak = esCorta
+    // La corta son dos hojas explicitas: el salto entre ellas lo impone el
+    // CSS. La completa se parte en varias y hay que evitar que un corte caiga
+    // en medio de una tarjeta.
+    opciones.pagebreak = corta
         ? { mode: ['css', 'legacy'] }
         : { mode: ['css', 'legacy'], avoid: ['.item', '.tl-item', '.educ-item', '.proyecto'] };
 
-    // html2pdf escala la tarjeta ya renderizada al ancho util de la hoja,
-    // asi que el alto final depende de la razon alto/ancho. Con una ventana
-    // de navegador estrecha la tarjeta se estrecha, el texto envuelve mas y
-    // el PDF se va a 2 o mas paginas. Por debajo de 820px el breakpoint
-    // responsive ademas la parte en dos columnas.
-    // Se inyecta una hoja de estilo temporal que fija el ancho de diseno y
-    // devuelve el layout de escritorio, para que el PDF sea siempre igual
-    // sin importar el tamano de la ventana.
+    // html2pdf escala el elemento ya renderizado al ancho util de la hoja, asi
+    // que el alto final depende de la razon alto/ancho. Con una ventana de
+    // navegador estrecha la tarjeta se estrecha, el texto envuelve mas y el
+    // PDF se descuadra. Se inyecta una hoja de estilo temporal que fija el
+    // ancho de diseno, devuelve el layout de escritorio y estira cada hoja
+    // hasta llenar la pagina, para que el PDF sea siempre igual sin importar
+    // el tamano de la ventana.
     const estilo = document.createElement('style');
     estilo.textContent =
+        '.pdf-ancho-fijo .paginas {' +
+            'width: ' + ancho + 'px !important;' +
+            'max-width: ' + ancho + 'px !important;' +
+            'gap: 0 !important;' +
+        '}' +
         '.pdf-ancho-fijo .cv-card {' +
             'width: ' + ancho + 'px !important;' +
             'max-width: ' + ancho + 'px !important;' +
             'flex-direction: row !important;' +
+            (corta ? 'min-height: ' + ALTO_HOJA + 'px !important;' : '') +
         '}' +
-        (esCorta ?
+        (corta ?
             '.pdf-ancho-fijo .side {' +
                 'width: 32% !important;' +
                 'border-bottom: none !important;' +
@@ -48,6 +112,10 @@ function generarPDF() {
             '.pdf-ancho-fijo .main {' +
                 'width: 68% !important;' +
                 'padding: 16px 30px !important;' +
+            '}' +
+            '.pdf-ancho-fijo .paginas > .cv-card + .cv-card {' +
+                'break-before: page !important;' +
+                'page-break-before: always !important;' +
             '}'
         :
             '.pdf-ancho-fijo .header, .pdf-ancho-fijo .main {' +
@@ -70,7 +138,8 @@ function generarPDF() {
     }
 
     try {
-        const worker = html2pdf().set(opciones).from(tarjeta);
+        const objetivo = document.querySelector('.paginas') || tarjeta;
+        const worker = html2pdf().set(opciones).from(objetivo);
         const promesa = worker.save();
         if (promesa && typeof promesa.then === 'function') {
             promesa.then(restaurar, restaurar);
@@ -80,4 +149,10 @@ function generarPDF() {
         restaurar();
         throw error;
     }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', prepararPaginas);
+} else {
+    prepararPaginas();
 }

@@ -26,6 +26,17 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+.paginas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+}
+
+/* La version corta se parte en dos hojas. El salto se fuerza aqui para que
+   la segunda tarjeta empiece en una pagina nueva en vez de cortarse. */
+.paginas > .cv-card + .cv-card { break-before: page; page-break-before: always; }
+
 .cv-card {
     max-width: 980px;
     margin: 0 auto;
@@ -233,6 +244,8 @@ body {
 
 @media print {
     body { background: #fff; padding: 0; }
+    /* Sin hueco entre las dos hojas: el salto de pagina ya las separa. */
+    .paginas { gap: 0; }
     .cv-card {
         /* El ancho del papel (~756px) dispara el breakpoint de 820px, que
            colapsa el CV a una sola columna. Hay que forzar la version
