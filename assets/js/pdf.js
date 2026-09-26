@@ -51,12 +51,13 @@ function prepararPaginas() {
     Array.prototype.slice.call(main2.querySelectorAll(':scope > .bloque'))
         .forEach(function (b) { main2.removeChild(b); });
 
+    // Solo los proyectos pasan a la hoja 2. La formacion y el enlace a GitHub
+    // se quedan en la hoja 1, asi que el reparto queda:
+    //   hoja 1 = perfil, experiencia, formacion, github
+    //   hoja 2 = los 6 proyectos
     // appendChild ya traslada el nodo de donde este, asi que no hace falta
-    // quitarlo antes de su sitio. Se traslada primero la formacion y luego
-    // los proyectos, para que en la hoja 2 la formacion abra y los proyectos
-    // cierren.
-    bloques.slice(iCorte + 1)
-        .concat(bloques.slice(iCorte, iCorte + 1))
+    // quitarlo antes de su sitio.
+    Array.from(bloques.splice(iCorte, 1))
         .forEach(function (b) { main2.appendChild(b); });
 }
 

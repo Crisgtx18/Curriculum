@@ -174,6 +174,14 @@ body {
 
 .perfil { font-size: .835rem; color: var(--ink-2); }
 
+/* Enlaces dentro de un bloque (GitHub). Sin esto salen en el azul por defecto
+   del navegador, que desentona con la paleta del CV. */
+.bloque > p a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+}
+
 /* timeline */
 .tl { position: relative; padding-left: 18px; }
 .tl::before { content: ''; position: absolute; left: 4px; top: 5px; bottom: 5px; width: 2px; background: var(--line); }
