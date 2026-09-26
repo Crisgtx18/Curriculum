@@ -26,21 +26,8 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-.paginas {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 26px;
-}
-
-/* La version corta se parte en dos hojas. El salto se fuerza aqui para que
-   la segunda tarjeta empiece en una pagina nueva en vez de cortarse. */
-.paginas > .cv-card + .cv-card { break-before: page; page-break-before: always; }
-
-/* La segunda hoja va a ancho completo. No se repite la barra lateral: en una
-   pagina siguiente es ruido, no informacion. */
-.cv-card--ancha .main { width: 100%; }
-
+/* La versión corta cabe en una sola hoja: la tarjeta es la misma que se ve en
+   la web y la que se arma para el PDF (assets/js/pdf.js). */
 .cv-card {
     max-width: 980px;
     margin: 0 auto;
@@ -245,43 +232,14 @@ body {
 }
 .btn-print:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(79, 70, 229, .4); }
 .btn-print:active { transform: translateY(0); }
+.btn-print--ocupado { opacity: .75; cursor: progress; transform: none; }
 
+/* El escenario del PDF (assets/js/pdf.js) monta las cajas a un ancho fijo, de
+   980 px, para que el reparto no dependa de la ventana. Este breakpoint no debe
+   tocarlo: con body.pdf-activo se queda la maquetacion de escritorio. */
 @media (max-width: 820px) {
-    .cv-card { flex-direction: column; }
-    .side, .main { width: 100%; }
-    .side { border-right: none; border-bottom: 1px solid var(--line); }
-    .main { padding: 24px 20px; }
-}
-@page { size: A4 portrait; margin: 5mm; }
-
-@media print {
-    body { background: #fff; padding: 0; }
-    /* Sin hueco entre las dos hojas: el salto de pagina ya las separa. */
-    .paginas { gap: 0; }
-    .cv-card {
-        /* El ancho del papel (~756px) dispara el breakpoint de 820px, que
-           colapsa el CV a una sola columna. Hay que forzar la version
-           de escritorio para que coincida con el boton. */
-        flex-direction: row;
-        box-shadow: none;
-        border-radius: 0;
-        /* 200mm de ancho util (A4 menos 2x5mm) / 259.2mm que ocupa el card
-           de 980px. Es el mismo escalado que aplica html2pdf, asi que
-           Ctrl+P y el boton producen el mismo resultado. */
-        zoom: 0.7716;
-    }
-    .side {
-        width: 32%;
-        border-right: 1px solid #7a9fdf;
-        border-bottom: none;
-        padding: 20px 24px;
-    }
-    .main { width: 68%; padding: 16px 30px; }
-    /* El mismo estirado que aplica el boton, para que Ctrl+P no deje la
-       tarjeta como una caja pequena arriba de una hoja vacia. 1390px escalados
-       por el 0.7716 de antes dan 1072px, que es la altura util de la hoja. */
-    .paginas > .cv-card { min-height: 1390px; }
-    .cv-card--ancha .main { width: 100%; }
-    .tl-item, .proj, .educ-item { page-break-inside: avoid; }
-    .btn-print { display: none; }
+    body:not(.pdf-activo) .cv-card { flex-direction: column; }
+    body:not(.pdf-activo) .side, body:not(.pdf-activo) .main { width: 100%; }
+    body:not(.pdf-activo) .side { border-right: none; border-bottom: 1px solid var(--line); }
+    body:not(.pdf-activo) .main { padding: 24px 20px; }
 }

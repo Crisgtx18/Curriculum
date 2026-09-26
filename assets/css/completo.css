@@ -232,34 +232,16 @@ body {
 }
 .btn-print:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(2, 132, 199, .45); }
 .btn-print:active { transform: translateY(0); }
+.btn-print--ocupado { opacity: .75; cursor: progress; transform: none; }
 
+/* El escenario del PDF (assets/js/pdf.js) monta las cajas a un ancho fijo, de
+   900 px, para que el reparto no dependa de la ventana. Este breakpoint no debe
+   tocarlo: con body.pdf-activo se queda la maquetacion de escritorio. */
 @media (max-width: 700px) {
-    .header, .main { flex-direction: column; text-align: center; }
-    .header { padding: 26px 20px; }
-    .main { padding: 24px 20px; }
-    .col-izq, .col-der { width: 100%; border-right: none; padding-right: 0; }
-    .contacto, .tags, .item-head { justify-content: center; }
-    .item-head { flex-direction: column; align-items: center; }
-}
-@page { size: A4 portrait; margin: 5mm; }
-
-@media print {
-    body { background: #fff; padding: 0; }
-    .cv-card {
-        box-shadow: none;
-        border-radius: 0;
-        /* El ancho de 900px hay que fijarlo, no basta con max-width. Sin el,
-           en impresion la tarjeta se estira al ancho util de la pagina, el
-           zoom se aplica encima y el texto envuelve mas: el alto final
-           dependia del motor de impresion y el CV largo caia justo en el
-           borde de 4 o 5 paginas (Edge sacaba 4, Opera GX 5). Fijando los
-           900px el alto es siempre el mismo y las paginas tambien.
-           200mm de ancho util (A4 menos 2x5mm) / 238.1mm que ocupa el card
-           de 900px. Mismo escalado que aplica html2pdf. */
-        width: 900px;
-        max-width: 900px;
-        zoom: 0.84;
-    }
-    .item, .tl-item, .educ-item, .proyecto { page-break-inside: avoid; }
-    .btn-print { display: none; }
+    body:not(.pdf-activo) .header, body:not(.pdf-activo) .main { flex-direction: column; text-align: center; }
+    body:not(.pdf-activo) .header { padding: 26px 20px; }
+    body:not(.pdf-activo) .main { padding: 24px 20px; }
+    body:not(.pdf-activo) .col-izq, body:not(.pdf-activo) .col-der { width: 100%; border-right: none; padding-right: 0; }
+    body:not(.pdf-activo) .contacto, body:not(.pdf-activo) .tags, body:not(.pdf-activo) .item-head { justify-content: center; }
+    body:not(.pdf-activo) .item-head { flex-direction: column; align-items: center; }
 }
