@@ -89,12 +89,25 @@ function generarPDF() {
     // ancho de diseno, devuelve el layout de escritorio y estira cada hoja
     // hasta llenar la pagina, para que el PDF sea siempre igual sin importar
     // el tamano de la ventana.
+    // html2pdf no renderiza el elemento al ancho que se le pida: maqueta
+    // siempre al ancho util de la hoja (200mm = 755.9px a 96dpi) y luego
+    // ajusta el bitmap a la pagina. Si aqui se fija width: 980px sin mas, el
+    // clon queda mas ancho que su contenedor y html2canvas lo estrecha
+    // aplastando el contenido: el alto se va de 2780 a 3558px y el PDF sale
+    // con 4 paginas en vez de 2 (que es como se veía).
+    //
+    // La solucion es la misma que usa el @media print para Ctrl+P: maquetar a
+    // 980px y aplicar zoom para que lo que se MIDE sean 756px, que es
+    // 200mm. Asi html2canvas escala 2 sin encoger nada, cada tarjeta mide
+    // 1073px = una hoja de 1084px, y salen 2 paginas. El 0.7716 es
+    // 200mm / 238.1mm, el mismo factor que el del CSS de impresion.
     const estilo = document.createElement('style');
     estilo.textContent =
         '.pdf-ancho-fijo .paginas {' +
             'width: ' + ancho + 'px !important;' +
             'max-width: ' + ancho + 'px !important;' +
             'gap: 0 !important;' +
+            (corta ? 'zoom: 0.7716;' : '') +
         '}' +
         '.pdf-ancho-fijo .cv-card {' +
             'width: ' + ancho + 'px !important;' +
