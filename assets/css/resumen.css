@@ -43,10 +43,10 @@ body {
     background: linear-gradient(168deg, var(--side) 0%, var(--side-2) 100%);
     border-right: 1px solid #7a9fdf;
     color: var(--side-ink);
-    padding: 26px 24px;
+    padding: 20px 24px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .side-top { text-align: center; }
@@ -139,9 +139,9 @@ body {
 .langs span:last-child { color: #3c5578; }
 
 /* ---------- MAIN ---------- */
-.main { width: 68%; padding: 26px 30px; }
+.main { width: 68%; padding: 16px 30px; line-height: 1.30; }
 
-.bloque { margin-bottom: 19px; }
+.bloque { margin-bottom: 12px; }
 .bloque:last-child { margin-bottom: 0; }
 
 .bloque > h2 {
@@ -149,7 +149,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1.4px;
     color: var(--accent);
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -162,7 +162,7 @@ body {
 /* timeline */
 .tl { position: relative; padding-left: 18px; }
 .tl::before { content: ''; position: absolute; left: 4px; top: 5px; bottom: 5px; width: 2px; background: var(--line); }
-.tl-item { position: relative; margin-bottom: 12px; }
+.tl-item { position: relative; margin-bottom: 7px; }
 .tl-item:last-child { margin-bottom: 0; }
 .tl-item::before {
     content: '';
@@ -182,8 +182,8 @@ body {
 .proj {
     border: 1px solid var(--line);
     border-radius: 10px;
-    padding: 8px 12px;
-    margin-bottom: 7px;
+    padding: 7px 12px;
+    margin-bottom: 5px;
     background: linear-gradient(180deg, #fbfcff, #fff);
     page-break-inside: avoid;
 }
@@ -204,7 +204,7 @@ body {
 .nota-proyectos a { color: var(--accent); text-decoration: none; font-weight: 600; }
 .nota-proyectos a:hover { text-decoration: underline; }
 
-.educ { display: flex; flex-direction: column; gap: 8px; }
+.educ { display: flex; flex-direction: column; gap: 6px; }
 .educ-item { border-left: 3px solid var(--line-2); padding: 0 0 0 10px; }
 .educ-item.on-going { border-left-color: #22d3ee; }
 .educ-item h4 { font-size: .85rem; color: var(--ink); font-weight: 700; }
@@ -229,8 +229,29 @@ body {
     .side { border-right: none; border-bottom: 1px solid var(--line); }
     .main { padding: 24px 20px; }
 }
+@page { size: A4 portrait; margin: 5mm; }
+
 @media print {
     body { background: #fff; padding: 0; }
-    .cv-card { box-shadow: none; border-radius: 0; max-width: none; }
+    .cv-card {
+        /* El ancho del papel (~756px) dispara el breakpoint de 820px, que
+           colapsa el CV a una sola columna. Hay que forzar la version
+           de escritorio para que coincida con el boton. */
+        flex-direction: row;
+        box-shadow: none;
+        border-radius: 0;
+        /* 200mm de ancho util (A4 menos 2x5mm) / 259.2mm que ocupa el card
+           de 980px. Es el mismo escalado que aplica html2pdf, asi que
+           Ctrl+P y el boton producen el mismo resultado. */
+        zoom: 0.7716;
+    }
+    .side {
+        width: 32%;
+        border-right: 1px solid #7a9fdf;
+        border-bottom: none;
+        padding: 20px 24px;
+    }
+    .main { width: 68%; padding: 16px 30px; }
+    .tl-item, .proj, .educ-item { page-break-inside: avoid; }
     .btn-print { display: none; }
 }

@@ -241,8 +241,17 @@ body {
     .contacto, .tags, .item-head { justify-content: center; }
     .item-head { flex-direction: column; align-items: center; }
 }
+@page { size: A4 portrait; margin: 5mm; }
+
 @media print {
     body { background: #fff; padding: 0; }
-    .cv-card { box-shadow: none; border-radius: 0; max-width: none; }
+    .cv-card {
+        box-shadow: none;
+        border-radius: 0;
+        /* 200mm de ancho util (A4 menos 2x5mm) / 238.1mm que ocupa el card
+           de 900px. Mismo escalado que aplica html2pdf. */
+        zoom: 0.84;
+    }
+    .item, .tl-item, .educ-item, .proyecto { page-break-inside: avoid; }
     .btn-print { display: none; }
 }
