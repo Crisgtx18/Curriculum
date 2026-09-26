@@ -248,8 +248,16 @@ body {
     .cv-card {
         box-shadow: none;
         border-radius: 0;
-        /* 200mm de ancho util (A4 menos 2x5mm) / 238.1mm que ocupa el card
+        /* El ancho de 900px hay que fijarlo, no basta con max-width. Sin el,
+           en impresion la tarjeta se estira al ancho util de la pagina, el
+           zoom se aplica encima y el texto envuelve mas: el alto final
+           dependia del motor de impresion y el CV largo caia justo en el
+           borde de 4 o 5 paginas (Edge sacaba 4, Opera GX 5). Fijando los
+           900px el alto es siempre el mismo y las paginas tambien.
+           200mm de ancho util (A4 menos 2x5mm) / 238.1mm que ocupa el card
            de 900px. Mismo escalado que aplica html2pdf. */
+        width: 900px;
+        max-width: 900px;
         zoom: 0.84;
     }
     .item, .tl-item, .educ-item, .proyecto { page-break-inside: avoid; }
