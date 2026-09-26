@@ -22,9 +22,9 @@ function prepararPaginas() {
     if (!main1) return;
 
     const bloques = Array.prototype.slice.call(main1.querySelectorAll(':scope > .bloque'));
-    // La hoja 1 se queda con perfil y experiencia. Todo lo demas (proyectos y
-    // formacion) pasa a la hoja 2, que va a ancho completo. El corte se busca
-    // por el titulo para no depender del idioma.
+    // La hoja 1 se queda con perfil y experiencia. Todo lo demas pasa a la
+    // hoja 2, que va a ancho completo. El corte se busca por el titulo para
+    // no depender del idioma.
     //
     // Los proyectos no se reparten entre las dos hojas: la hoja 1 aguanta
     // gracias a la barra lateral, que ocupa toda su altura, mientras que la
@@ -52,8 +52,12 @@ function prepararPaginas() {
         .forEach(function (b) { main2.removeChild(b); });
 
     // appendChild ya traslada el nodo de donde este, asi que no hace falta
-    // quitarlo antes de su sitio.
-    bloques.slice(iCorte).forEach(function (b) { main2.appendChild(b); });
+    // quitarlo antes de su sitio. Se traslada primero la formacion y luego
+    // los proyectos, para que en la hoja 2 la formacion abra y los proyectos
+    // cierren.
+    bloques.slice(iCorte + 1)
+        .concat(bloques.slice(iCorte, iCorte + 1))
+        .forEach(function (b) { main2.appendChild(b); });
 }
 
 function generarPDF() {

@@ -269,6 +269,11 @@ body {
         padding: 20px 24px;
     }
     .main { width: 68%; padding: 16px 30px; }
+    /* El mismo estirado que aplica el boton, para que Ctrl+P no deje la
+       tarjeta como una caja pequena arriba de una hoja vacia. 1390px escalados
+       por el 0.7716 de antes dan 1072px, que es la altura util de la hoja. */
+    .paginas > .cv-card { min-height: 1390px; }
+    .cv-card--ancha .main { width: 100%; }
     .tl-item, .proj, .educ-item { page-break-inside: avoid; }
     .btn-print { display: none; }
 }
