@@ -6,13 +6,6 @@ var ANCHO_CV = { corta: 980, larga: 900 };
 // redondeo no lo empujase a una tercera pagina.
 var ALTO_HOJA = 1390;
 
-// Projectos que se dejan en la hoja 1. El reparto apunta a igualar las dos
-// columnas derechas: la hoja 1 arrastra perfil + experiencia (~500px) y la
-// hoja 2 formacion (~230px), asi que la hoja 2 necesita dos proyectos mas.
-function repartoProyectos(total) {
-    return Math.max(1, Math.floor((total - 2) / 2));
-}
-
 function esVersionCorta() {
     return !!document.querySelector('.side');
 }
@@ -29,21 +22,19 @@ function prepararPaginas() {
     if (!main1) return;
 
     const bloques = Array.prototype.slice.call(main1.querySelectorAll(':scope > .bloque'));
-    // El bloque de proyectos se localiza por su titulo para que el reparto
-    // no dependa del idioma: Proyectos / Projetos / Projects.
-    const iProy = bloques.findIndex(function (b) {
+    // La hoja 1 se queda con perfil y experiencia. Todo lo demas (proyectos y
+    // formacion) pasa a la hoja 2, que va a ancho completo. El corte se busca
+    // por el titulo para no depender del idioma.
+    //
+    // Los proyectos no se reparten entre las dos hojas: la hoja 1 aguanta
+    // gracias a la barra lateral, que ocupa toda su altura, mientras que la
+    // hoja 2 se queda a pelo. Meterle proyectos a la hoja 1 solo desplaza el
+    // hueco de una a otra.
+    const iCorte = bloques.findIndex(function (b) {
         const h2 = b.querySelector('h2');
         return h2 && /proyecto|projet|project/i.test(h2.textContent);
     });
-    if (iProy < 0) return;
-
-    const bloqueProy = bloques[iProy];
-    const proyectos = Array.prototype.slice.call(bloqueProy.querySelectorAll(':scope > .proj'));
-    const enHoja1 = repartoProyectos(proyectos.length);
-    if (enHoja1 >= proyectos.length) return;   // no hay nada que repartir
-
-    const bloqueFormacion = bloques[bloques.length - 1];
-    if (bloqueFormacion === bloqueProy) return;
+    if (iCorte < 1) return;
 
     const caja = document.createElement('div');
     caja.className = 'paginas';
@@ -51,15 +42,18 @@ function prepararPaginas() {
     caja.appendChild(tarjeta);
 
     const hoja2 = tarjeta.cloneNode(true);
+    hoja2.classList.add('cv-card--ancha');
+    const lateral = hoja2.querySelector('.side');
+    if (lateral) lateral.parentNode.removeChild(lateral);
     caja.appendChild(hoja2);
-    const main2 = hoja2.querySelector('.main');
 
-    // La hoja 2 arranca vacia: se rellena solo con lo que se le traslada.
+    const main2 = hoja2.querySelector('.main');
     Array.prototype.slice.call(main2.querySelectorAll(':scope > .bloque'))
         .forEach(function (b) { main2.removeChild(b); });
 
-    proyectos.slice(enHoja1).forEach(function (p) { main2.appendChild(bloqueProy.removeChild(p)); });
-    if (bloqueFormacion.parentNode === main1) main2.appendChild(bloqueFormacion);
+    // appendChild ya traslada el nodo de donde este, asi que no hace falta
+    // quitarlo antes de su sitio.
+    bloques.slice(iCorte).forEach(function (b) { main2.appendChild(b); });
 }
 
 function generarPDF() {
@@ -113,6 +107,7 @@ function generarPDF() {
                 'width: 68% !important;' +
                 'padding: 16px 30px !important;' +
             '}' +
+            '.pdf-ancho-fijo .cv-card--ancha .main { width: 100% !important; }' +
             '.pdf-ancho-fijo .paginas > .cv-card + .cv-card {' +
                 'break-before: page !important;' +
                 'page-break-before: always !important;' +

@@ -37,6 +37,10 @@ body {
    la segunda tarjeta empiece en una pagina nueva en vez de cortarse. */
 .paginas > .cv-card + .cv-card { break-before: page; page-break-before: always; }
 
+/* La segunda hoja va a ancho completo. No se repite la barra lateral: en una
+   pagina siguiente es ruido, no informacion. */
+.cv-card--ancha .main { width: 100%; }
+
 .cv-card {
     max-width: 980px;
     margin: 0 auto;
